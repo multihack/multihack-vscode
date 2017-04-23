@@ -1,7 +1,5 @@
 # multihack-vscode
 
-**Not ready yet: Coming soon!**
-
 Synchronizes code and project structure between multiple users in realtime.
 
 Also check out [the web version](https://github.com/RationalCoding/multihack-web) and [the Brackets extension]((https://github.com/RationalCoding/multihack-brackets).
@@ -11,6 +9,14 @@ Also check out [the web version](https://github.com/RationalCoding/multihack-web
 2. Run the "Join or Leave Room" command.
 3. Enter the same room ID as your team, and an optional nickname. 
 4. Your code is now being synced!  
+
+## Installation
+
+Due to a bug in VSCode Extension packager, you will need to manually provide an Electron binary.
+
+Go to `%USERPROFILE%\.vscode\extensions\rationalcoding.multihack-vscode-1.2.3\node_modules\electron\dist` or `/User/.vscode/extensions/rationalcoding.multihack-vscode-1.2.3/node_modules/electron/dist` and drop an Electron binary there.
+
+Please convince Microsoft to properly support P2P extensions [by +1'ing this issue](https://github.com/Microsoft/vscode/issues/25172).
 
 ## Fetch Code
 
