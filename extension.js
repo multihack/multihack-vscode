@@ -82,13 +82,16 @@ function setupEventListeners () {
 
 function handleRequestProject (requester) {
   // vscode is an electron app, so we don't have to worry about forwarding limits
-  vscode.workspace.textDocuments.forEach(function (doc) {
-    fs.readFile(doc.fileName, function (err, content) {
-      if (err) return
-      var filePath = toWebPath(vscode.workspace.asRelativePath(currentEditor.document.fileName))
-      remote.provideFile(filePath, content.toString(), requester)
+  vscode.workspace.findFiles('**/*').then(function (uris) {
+    uris.forEach(function (uri) {
+      fs.readFile(uri.path, function (err, content) {
+        if (err) return
+        var filePath = toWebPath(vscode.workspace.asRelativePath(uri.path))
+        remote.provideFile(filePath, content.toString(), requester)
+        console.log('provided', filePath)
+      })
     })
-  })
+  }, noop)
 }
 
 function handleProvideFile (data) {
