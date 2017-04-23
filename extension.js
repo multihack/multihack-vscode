@@ -2,6 +2,7 @@ var vscode = require('vscode')
 var mkdirp = require('mkdirp')
 var fs = require('fs')
 var trash = require('trash')
+var exec = require('child_process').exec
 
 var DEFAULT_HOSTNAME = 'https://quiet-shelf-57463.herokuapp.com'
 
@@ -44,24 +45,26 @@ function handleStart () {
 
   setupEventListeners()
 
-  getRoomAndNickname(function (roomID, nickname) {
-    remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
+  installElectron(function () {
+    getRoomAndNickname(function (roomID, nickname) {
+      remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
 
-    remote.on('changeFile', handleRemoteChangeFile)
-    remote.on('deleteFile', handleRemoteDeleteFile)
-    remote.on('requestProject', handleRequestProject)
-    remote.on('provideFile', handleProvideFile)
+      remote.on('changeFile', handleRemoteChangeFile)
+      remote.on('deleteFile', handleRemoteDeleteFile)
+      remote.on('requestProject', handleRequestProject)
+      remote.on('provideFile', handleProvideFile)
 
-    remote.once('gotPeer', function () {
-      console.log('gotPeer')
-      remote.requestProject()
+      remote.once('gotPeer', function () {
+        console.log('gotPeer')
+        remote.requestProject()
+      })
+      remote.on('lostPeer', function (peer) {
+        vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname)
+      })
+
+      isSyncing = true
+      console.log('MH started')
     })
-    remote.on('lostPeer', function (peer) {
-      vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
-    })
-
-    isSyncing = true
-    console.log('MH started')
   })
 }
 
@@ -295,6 +298,16 @@ function getRoomAndNickname (cb) {
       nickname = nickname || 'Guest'
       cb(roomID, nickname)
     })
+  })
+}
+
+function installElectron (cb) {
+  var alreadyInstalled = context.workspaceState.get('installedElectron', false)
+  if (alreadyInstalled) return cb()
+  vscode.window.showInformationMessage('Multihack: Initializing, please wait. (This will only happen once)')
+  exec('npm install electron', function (err, stdout, stderr) {
+    context.workspaceState.update('installedElectron', true)
+    cb()
   })
 }
 

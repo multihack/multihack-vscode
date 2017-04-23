@@ -10,14 +10,6 @@ Also check out [the web version](https://github.com/RationalCoding/multihack-web
 3. Enter the same room ID as your team, and an optional nickname. 
 4. Your code is now being synced!  
 
-## Installation
-
-Due to a bug in VSCode Extension packager, you will need to manually provide an Electron binary.
-
-Go to `%USERPROFILE%\.vscode\extensions\rationalcoding.multihack-vscode-<YOUR VERSION>` or `~/.vscode/extensions/rationalcoding.multihack-vscode-<YOUR VERSION>` and run `npm install electron`
-
-Please convince Microsoft to properly support P2P extensions [by +1'ing this issue](https://github.com/Microsoft/vscode/issues/25172).
-
 ## Fetch Code
 
 If someone joins the room with conflicting code, it will not be watched and therefore not synced.  
