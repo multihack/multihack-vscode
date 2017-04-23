@@ -14,7 +14,7 @@ Also check out [the web version](https://github.com/RationalCoding/multihack-web
 
 Due to a bug in VSCode Extension packager, you will need to manually provide an Electron binary.
 
-Go to `%USERPROFILE%\.vscode\extensions\rationalcoding.multihack-vscode-1.2.3` or `/User/.vscode/extensions/rationalcoding.multihack-vscode-1.2.3` and run `npm install electron`
+Go to `%USERPROFILE%\.vscode\extensions\rationalcoding.multihack-vscode-1.2.7` or `/User/.vscode/extensions/rationalcoding.multihack-vscode-1.2.7` and run `npm install electron`
 
 Please convince Microsoft to properly support P2P extensions [by +1'ing this issue](https://github.com/Microsoft/vscode/issues/25172).
 
