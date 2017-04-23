@@ -1,6 +1,6 @@
 # multihack-vscode
 
-** Not ready yet: Coming soon! **
+**Not ready yet: Coming soon!**
 
 Synchronizes code and project structure between multiple users in realtime.
 
