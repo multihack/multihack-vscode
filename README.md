@@ -36,7 +36,7 @@ Voice chat is not currently supported in the VSCode version, but it will be comi
 
 ## Running Your Own Instance
 
-This extension points to the author's server by default. No code is sent through the server as long as your version of Brackets supports WebRTC (which most do). 
+This extension points to the author's server by default. No code is sent through the server as long as both peers supports WebRTC (which most do). 
 
 If you want your own instance, see [multihack-server](https://github.com/RationalCoding/multihack-server).
 
