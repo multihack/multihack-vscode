@@ -1,12 +1,11 @@
 var vscode = require('vscode')
 var mkdirp = require('mkdirp')
 var fs = require('fs')
-var path = require('path')
 var trash = require('trash')
-var rimraf = require('rimraf')
-var exec = require("child_process").exec
 
 var DEFAULT_HOSTNAME = 'https://quiet-shelf-57463.herokuapp.com'
+
+var RemoteManager = require('./lib/remote')
 
 var config = vscode.workspace.getConfiguration('multihack-vscode')
 var context = null
@@ -46,27 +45,23 @@ function handleStart () {
   setupEventListeners()
 
   getRoomAndNickname(function (roomID, nickname) {
-    // hack: vscode is corrupting electron install
-    fixElectron(function (){
-      var RemoteManager = require('./lib/remote')
-      remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
+    remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
 
-      remote.on('changeFile', handleRemoteChangeFile)
-      remote.on('deleteFile', handleRemoteDeleteFile)
-      remote.on('requestProject', handleRequestProject)
-      remote.on('provideFile', handleProvideFile)
+    remote.on('changeFile', handleRemoteChangeFile)
+    remote.on('deleteFile', handleRemoteDeleteFile)
+    remote.on('requestProject', handleRequestProject)
+    remote.on('provideFile', handleProvideFile)
 
-      remote.once('gotPeer', function () {
-        console.log('gotPeer')
-        remote.requestProject()
-      })
-      remote.on('lostPeer', function (peer) {
-        vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
-      })
-
-      isSyncing = true
-      console.log('MH started')
+    remote.once('gotPeer', function () {
+      console.log('gotPeer')
+      remote.requestProject()
     })
+    remote.on('lostPeer', function (peer) {
+      vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
+    })
+
+    isSyncing = true
+    console.log('MH started')
   })
 }
 
@@ -296,25 +291,6 @@ function getRoomAndNickname (cb) {
     }).then(function (nickname) {
       nickname = nickname || 'Guest'
       cb(roomID, nickname)
-    })
-  })
-}
-
-function fixElectron (cb) {
-  console.log('fixing electron...')
-  var libNodePath = path.join(__dirname, '/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron\ Framework.framework/Versions/A/Libraries/libnode.dylib')
-  fs.stat(libNodePath, function (err) {
-    if (!err) {
-      console.log('electron OK')
-      return
-    }
-    console.log(err)
-    console.log('electron corrupted, reinstalling')
-    var electronPath = path.join(__dirname, '/node_modules/electron')
-    rimraf(electronPath, function () {
-        exec("npm install electron", function (error, stdout, stderr) {
-          cb()
-        })
     })
   })
 }
