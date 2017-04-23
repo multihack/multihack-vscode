@@ -2,7 +2,7 @@
     "name": "multihack-vscode",
     "displayName": "multihack-vscode",
     "description": "Supercharge your IDE with realtime collaboration features! P2P project sync for pair programming.",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "publisher": "rationalcoding",
     "license": "MIT",
     "bugs": {
@@ -68,6 +68,7 @@
         "inherits": "^2.0.3",
         "multihack-wire": "^1.1.1",
         "p2p-graph": "^1.1.1",
+        "path": "^0.12.7",
         "simple-signal-client": "^1.2.6",
         "socket.io-client": "^1.7.3",
         "stream-throttle": "^0.1.3",
