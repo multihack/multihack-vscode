@@ -38,7 +38,7 @@ exports.deactivate = deactivate
 function handleStart () {
   if (isSyncing) handleStop() // clean up before joining a new room
 
-  if (!vscode.workspace.rootPath) return vscode.window.showErrorMessage('Open a folder before joining a room!')
+  if (!vscode.workspace.rootPath) return vscode.window.showErrorMessage('Multihack: Open a folder before joining a room!')
   projectBasePath = vscode.workspace.rootPath
 
   setupEventListeners()
@@ -54,6 +54,9 @@ function handleStart () {
     remote.once('gotPeer', function () {
       console.log('gotPeer')
       remote.requestProject()
+    })
+    remote.on('lostPeer', function (peer) {
+      vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
     })
 
     isSyncing = true
@@ -89,11 +92,9 @@ function handleRequestProject (requester) {
 
 function handleProvideFile (data) {
   var filePath = projectBasePath+data.filePath
-  var parentPath = filePath.split('/').slice(0, -1).join('/')
-  mkdirp(parentPath, function (err) {
-    if (err) console.error(err)
-    fs.writeFile(filePath, data.content, noop)
-  })
+  var range = new vscode.Range(0, 0, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+  var textEdit = new vscode.TextEdit(range, data.content)
+  applyWorkspaceEdits(filePath, [textEdit], noop)
 }
 
 function handleEditorChange () {
@@ -119,7 +120,6 @@ function handleLocalDeleteFile (uri) {
 }
 
 function handleLocalChangeFile (e) {
-  console.log(e)
   if (editorMutexLock || !isSyncing) return
   for (var i=0; i<e.contentChanges.length; i++) { 
     var change = toCodeMirrorChange(e.contentChanges[i])
