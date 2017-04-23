@@ -2,6 +2,7 @@ var vscode = require('vscode')
 var mkdirp = require('mkdirp')
 var fs = require('fs')
 var trash = require('trash')
+var exec = require("child_process").exec
 
 var DEFAULT_HOSTNAME = 'https://quiet-shelf-57463.herokuapp.com'
 
@@ -25,7 +26,8 @@ function activate (newContext) {
 
   context = newContext
 
-  vscode.commands.registerCommand('extension.multihackJoinOrLeaveRoom', handleStart)
+  vscode.commands.registerCommand('extension.multihackJoinRoom', handleStart)
+  vscode.commands.registerCommand('extension.multihackLeaveRoom', handleStop)
   vscode.commands.registerCommand('extension.multihackFetchCode', requestProject)
 }
 exports.activate = activate
@@ -44,23 +46,26 @@ function handleStart () {
   setupEventListeners()
 
   getRoomAndNickname(function (roomID, nickname) {
-    remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
+    // hack: vscode is corrupting electron install
+    exec("npm link electron", function (error, stdout, stderr) {
+      remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
 
-    remote.on('changeFile', handleRemoteChangeFile)
-    remote.on('deleteFile', handleRemoteDeleteFile)
-    remote.on('requestProject', handleRequestProject)
-    remote.on('provideFile', handleProvideFile)
+      remote.on('changeFile', handleRemoteChangeFile)
+      remote.on('deleteFile', handleRemoteDeleteFile)
+      remote.on('requestProject', handleRequestProject)
+      remote.on('provideFile', handleProvideFile)
 
-    remote.once('gotPeer', function () {
-      console.log('gotPeer')
-      remote.requestProject()
+      remote.once('gotPeer', function () {
+        console.log('gotPeer')
+        remote.requestProject()
+      })
+      remote.on('lostPeer', function (peer) {
+        vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
+      })
+
+      isSyncing = true
+      console.log('MH started')
     })
-    remote.on('lostPeer', function (peer) {
-      vscode.window.showInformationMessage('Multihack: Lost connection to '+peer.metadata.nickname);
-    })
-
-    isSyncing = true
-    console.log('MH started')
   })
 }
 
