@@ -2,7 +2,7 @@
 
 Synchronizes code and project structure between multiple users in realtime.
 
-Also check out [the web version](https://github.com/RationalCoding/multihack-web) and [the Brackets extension]((https://github.com/RationalCoding/multihack-brackets).
+Also check out [the web version](https://github.com/RationalCoding/multihack-web) and [the Brackets extension](https://github.com/RationalCoding/multihack-brackets).
 
 ## Usage 
 1. Open the folder containing your project.
