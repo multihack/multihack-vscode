@@ -1,12 +1,11 @@
 var vscode = require('vscode')
 var mkdirp = require('mkdirp')
 var fs = require('fs')
+var path = require('path')
 var trash = require('trash')
 var exec = require('child_process').exec
 
 var DEFAULT_HOSTNAME = 'https://quiet-shelf-57463.herokuapp.com'
-
-var RemoteManager = require('./lib/remote')
 
 var config = vscode.workspace.getConfiguration('multihack-vscode')
 var context = null
@@ -25,6 +24,8 @@ function activate (newContext) {
   console.log('Congratulations, your extension "multihack-vscode" is now active!')
 
   context = newContext
+
+  console.log(context.storagePath)
 
   vscode.commands.registerCommand('extension.multihackJoinRoom', handleStart)
   vscode.commands.registerCommand('extension.multihackLeaveRoom', handleStop)
@@ -47,6 +48,7 @@ function handleStart () {
 
   installElectron(function () {
     getRoomAndNickname(function (roomID, nickname) {
+      var RemoteManager = require('./lib/remote')
       remote = new RemoteManager(config.get('multihack.hostname') || DEFAULT_HOSTNAME, roomID, nickname)
 
       remote.on('changeFile', handleRemoteChangeFile)
@@ -302,12 +304,18 @@ function getRoomAndNickname (cb) {
 }
 
 function installElectron (cb) {
-  var alreadyInstalled = context.workspaceState.get('installedElectron', false)
-  if (alreadyInstalled) return cb()
-  vscode.window.showInformationMessage('Multihack: Initializing, please wait. (This will only happen once)')
-  exec('npm install electron', function (err, stdout, stderr) {
-    context.workspaceState.update('installedElectron', true)
-    cb()
+  var extPath = vscode.extensions.getExtension('rationalcoding.multihack-vscode').extensionPath
+  fs.stat(path.join(extPath, 'electron-ok'), function (err) {
+    if (err) {
+      vscode.window.showInformationMessage('Multihack: Initializing, please wait. (This will only happen once)')
+      exec('cd '+extPath+' && npm install electron && mkdir electron-ok',  function (err, stdout, stderr) {
+        vscode.window.showInformationMessage('Multihack: Initializion completed! Enjoy!')
+        cb()
+      }, noop)
+    } else {
+      console.log('electron is ok')
+      cb()
+    }
   })
 }
 
