@@ -1,5 +1,7 @@
 # multihack-vscode
 
+** Not ready yet: Coming soon! **
+
 Synchronizes code and project structure between multiple users in realtime.
 
 Also check out [the web version](https://github.com/RationalCoding/multihack-web) and [the Brackets extension]((https://github.com/RationalCoding/multihack-brackets).
