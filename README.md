@@ -1,6 +1,6 @@
 # multihack-vscode 
 
-**Coming soon**
+**Coming soon...**
 
 Synchronizes code and project structure between multiple users in realtime.
 
@@ -11,12 +11,6 @@ Also check out [the web version](https://github.com/RationalCoding/multihack-web
 2. Run the "Join or Leave Room" command.
 3. Enter the same room ID as your team, and an optional nickname. 
 4. Your code is now being synced!  
-
-## Fetch Code
-
-If someone joins the room with conflicting code, it will not be watched and therefore not synced.  
-
-To get unwatched code or force a sync, run the "Fetch Code" command on the side without the correct code.
 
 ## How It Works
 
