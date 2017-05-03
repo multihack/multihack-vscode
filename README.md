@@ -1,6 +1,6 @@
 # multihack-vscode 
 
-**Early Alpha: Please report any issues!**
+**Coming soon**
 
 Synchronizes code and project structure between multiple users in realtime.
 
