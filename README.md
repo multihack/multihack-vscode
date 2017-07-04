@@ -1,4 +1,4 @@
-# multihack-vscode 
+# multihack-vscode (WIP)
 
 **Coming soon...**
 
